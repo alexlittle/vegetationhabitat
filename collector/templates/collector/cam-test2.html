@@ -64,7 +64,13 @@
 
         // Request access to the camera
         function startCamera() {
-            navigator.mediaDevices.getUserMedia({ video: true })
+            const constraints = {
+          video: {
+            facingMode: { exact: "environment" } // Specifies the back camera
+          }
+        };
+
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then((cameraStream) => {
                     stream = cameraStream;
                     video.srcObject = stream;
