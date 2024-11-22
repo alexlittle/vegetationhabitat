@@ -55,13 +55,6 @@ class RecordObservationView(LoginRequiredMixin, FormView):
 class ObservationSuccessView(TemplateView):
     template_name = 'collector/observation_success.html'
 
-class UserLoginView(LoginView):
-    template_name = 'collector/login.html'
-    redirect_authenticated_user = True
-
-    def form_invalid(self, form):
-        messages.error(self.request, "Invalid username or password.")
-        return super().form_invalid(form)
 
 class UserLogoutView(LogoutView):
     next_page = reverse_lazy('collector:index')
