@@ -1,19 +1,10 @@
 from django import forms
 
 class ObservationForm(forms.Form):
-    observation_image = forms.CharField(
-        label='Observation image',
-        widget=forms.TextInput()
-    )
-    geo_lat = forms.CharField(
-        label='Latitude',
-        widget=forms.TextInput()
-    )
-    geo_lng = forms.CharField(
-        label='Longitude',
-        widget=forms.TextInput()
-    )
-    plot = forms.CharField(
-        label='plot',
-        widget=forms.TextInput()
-    )
+    observation_image = forms.CharField(required = True,
+                           error_messages={"required": "Please capture an image"})
+    geo_lat = forms.CharField()
+    geo_lng = forms.CharField()
+    plot = forms.CharField(required = True,
+                           error_messages={"required": "Please enter a plot"})
+

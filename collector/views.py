@@ -10,7 +10,7 @@ from django.utils.timezone import now
 
 from .forms import ObservationForm
 from .models import Observation
-
+from django import forms
 
 class HomeView(TemplateView):
     template_name = 'collector/home.html'
@@ -21,6 +21,10 @@ class RecordObservationView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('collector:create_observation_success')
 
     def form_valid(self, form):
+        if not form.is_valid():
+            # Handle form validation errors here
+            return self.form_invalid(form)
+
         # Handle valid form submission here
         observation_image = form.cleaned_data['observation_image']
         geo_lat = form.cleaned_data['geo_lat']
@@ -46,8 +50,7 @@ class RecordObservationView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        # Handle invalid form submission here
-        return super().form_invalid(form)
+        return self.render_to_response(self.get_context_data(form=form))
 
 class ObservationSuccessView(TemplateView):
     template_name = 'collector/observation_success.html'
