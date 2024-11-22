@@ -13,8 +13,8 @@
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navbarScroll">
       <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll" >
-         <li>Welcome, {{ user.username }}</li>
         {% if user.is_authenticated %}
+            <li>Welcome, {{ user.username }}</li>
             <li> <form method="post" action="{% url 'collector:logout' %}" style="display: inline;">
                 {% csrf_token %}
             <button type="submit">Logout</button>

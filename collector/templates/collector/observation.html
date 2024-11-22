@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load humanize %}
+
+{% block extra_scripts %}
+
+
+
+<script defer src="{% static 'collector/camera.js' %}"></script>
+
+<script defer src="{% static 'collector/location.js' %}"></script>
+{% endblock extra_scripts %}
+
+
+{% block content %}
+
+<h1>{% trans 'Record Observation' %}</h1>
+
+<form id="ObservationForm"  method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <video id="video" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <img id="photo" style="display: none;" alt="Captured Photo">
+    <button id="capture" type="button">Capture</button>
+
+    <input type="hidden" id="ObservationImage" name="ObservationImage">
+    <button type="submit" id="submitObservation">Submit Observation</button>
+</form>
+
+{% endblock %}

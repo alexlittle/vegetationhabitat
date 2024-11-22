@@ -7,7 +7,23 @@
 
 <h1>{% trans 'Vegetation Habitat Data Collector' %}</h1>
 
-<a href="{% url 'collector:cam1' %}">Test with cam 1</a>
+<p>{% trans 'Demo/Prototype site for collecting observations' %}</p>
 
-<a href="{% url 'collector:cam2' %}">Test with cam 2</a>
+<p>{% trans 'To submit an observation, you will need to:' %}</p>
+
+<ul>
+    {% if not user.is_authenticated %}
+    <li><a href="{% url 'collector:login' %}">{% trans 'login' %}</a></li>
+    {% endif %}
+    <li>{% trans 'allow access to your camera' %}</li>
+    <li>{% trans 'allow access to your location' %}</li>
+</ul>
+
+<p>{% trans 'You\'ll be prompted for camera and location permissions when you go to add an observation' %}</p>
+
+{% if user.is_authenticated %}
+<ul>
+<li><a href="{% url 'collector:create_observation' %}">{% trans 'Add an Observation' %}</a></li>
+</ul>
+{% endif %}
 {% endblock %}

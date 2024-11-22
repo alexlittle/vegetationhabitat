@@ -116,6 +116,7 @@ EMAIL_FILE_PATH = '/tmp/'
 #####################################################################
 # Authentication
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

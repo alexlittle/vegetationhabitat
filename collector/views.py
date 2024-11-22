@@ -7,6 +7,8 @@ from django.contrib import messages
 class HomeView(TemplateView):
     template_name = 'collector/home.html'
 
+class RecordObservationView(LoginRequiredMixin, TemplateView):
+    template_name = 'collector/observation.html'
 
 class Cam1View(LoginRequiredMixin, TemplateView):
     template_name = 'collector/cam-test1.html'
