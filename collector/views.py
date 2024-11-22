@@ -8,3 +8,10 @@ class HomeView(TemplateView):
     template_name = 'collector/home.html'
 
 
+class Cam1View(TemplateView):
+    template_name = 'collector/cam-test1.html'
+
+class Cam2View(TemplateView):
+    template_name = 'collector/cam-test2.html'
+
+
