@@ -129,5 +129,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_NAME = "vh"
 
-from config.local_settings import *
+try:
+    from config.local_settings import *
+except ImportError:
+    import warnings
+    warnings.warn("Using default settings. Add `config.local_settings.py`"
+                  "for custom settings.")
 
