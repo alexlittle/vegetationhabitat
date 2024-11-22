@@ -4,11 +4,7 @@
 {% load humanize %}
 
 {% block extra_scripts %}
-
-
-
 <script defer src="{% static 'collector/camera.js' %}"></script>
-
 <script defer src="{% static 'collector/location.js' %}"></script>
 {% endblock extra_scripts %}
 
@@ -17,14 +13,27 @@
 
 <h1>{% trans 'Record Observation' %}</h1>
 
-<form id="ObservationForm"  method="POST" enctype="multipart/form-data">
+<form id="ObservationForm"  method="POST">
     {% csrf_token %}
+    <h3>Capture Photo</h3>
     <video id="video" autoplay></video>
     <canvas id="canvas" style="display: none;"></canvas>
     <img id="photo" style="display: none;" alt="Captured Photo">
     <button id="capture" type="button">Capture</button>
+    <input type="hidden" id="observation_image" name="observation_image">
 
-    <input type="hidden" id="ObservationImage" name="ObservationImage">
+    <h3>Location</h3>
+    <label for="geo_lat">Latitude:</label>
+    <input type="text" id="geo_lat" name="geo_lat" readonly>
+    <br><br>
+    <label for="geo_lng">Longitude:</label>
+    <input type="text" id="geo_lng" name="geo_lng" readonly>
+
+    <h3>Plot</h3>
+    <label for="plot">Plot:</label>
+    <input type="text" id="plot" name="plot">
+
+    <h3></h3>
     <button type="submit" id="submitObservation">Submit Observation</button>
 </form>
 

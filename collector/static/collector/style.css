@@ -93,13 +93,13 @@ h1 {
 
 
 h2 {
-	color: #04689a;
 	font-size: 130%;
 }
 
 h3 {
-	color: #04689a;
+
 	font-size: 110%;
+	margin-top: 20px;
 }
 
 video, canvas, img {
