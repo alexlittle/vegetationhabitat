@@ -106,6 +106,40 @@ video, canvas, img {
     margin-bottom: 10px;
 }
 
+.autocomplete-results {
+    position: absolute;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 999;
+}
+
+.autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.autocomplete-item:hover {
+    background-color: #f0f0f0;
+}
+
+.autocomplete-suggestions {
+    position: absolute;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 999;
+}
+.autocomplete-suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+.autocomplete-suggestion:hover {
+    background-color: #f1f1f1;
+}
+
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */

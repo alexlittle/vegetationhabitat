@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% if form.errors %}
+    <div style="color: red;">
+        <h3>There were errors with your submission:</h3>
+        <ul>
+            {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

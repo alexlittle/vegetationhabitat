@@ -4,21 +4,26 @@ from django.core.files.base import ContentFile
 from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import reverse_lazy
-from django.contrib import messages
+from django.views import View
+from django.urls import reverse_lazy, reverse
 from django.utils.timezone import now
-
-from .forms import ObservationForm
-from .models import Observation
-from django import forms
+from django.http import JsonResponse
+from .forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
+from .models import Observation, Species
 
 class HomeView(TemplateView):
     template_name = 'collector/home.html'
 
-class RecordObservationView(LoginRequiredMixin, FormView):
-    template_name = 'collector/observation.html'
-    form_class = ObservationForm
+class ObservationLocationPhotoView(LoginRequiredMixin, FormView):
+    template_name = 'collector/observation_loc_photo.html'
+    form_class = ObservationLocationPhotoForm
     success_url = reverse_lazy('collector:create_observation_success')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['step_number'] = 1
+        context['step_count'] = 4
+        return context
 
     def form_valid(self, form):
 
@@ -26,7 +31,6 @@ class RecordObservationView(LoginRequiredMixin, FormView):
         observation_image = form.cleaned_data['observation_image']
         geo_lat = form.cleaned_data['geo_lat']
         geo_lng = form.cleaned_data['geo_lng']
-        plot = form.cleaned_data['plot']
 
         # process image
         header, obs_image_encoded = observation_image.split(",", 1)  # Split the header and the base64 data
@@ -39,15 +43,116 @@ class RecordObservationView(LoginRequiredMixin, FormView):
         observation.user = self.request.user
         observation.geo_lat = geo_lat
         observation.geo_lng = geo_lng
-        observation.plot = plot
         observation.image.save(filename, ContentFile(obs_image_decoded_data))
         observation.save()
 
+        self.success_url = reverse('collector:create_observation_plot', kwargs={'id': observation.id})
         # Return the response to indicate success
         return super().form_valid(form)
 
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
+
+class ObservationPlotView(LoginRequiredMixin, FormView):
+    template_name = 'collector/observation_plot.html'
+    form_class = ObservationPlotForm
+    success_url = reverse_lazy('collector:create_observation_success')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['step_number'] = 2
+        context['step_count'] = 4
+        return context
+
+    def form_valid(self, form):
+
+        observation_id = self.kwargs.get('id')
+        # Fetch the existing observation
+        try:
+            observation = Observation.objects.get(id=observation_id, user=self.request.user)
+        except Observation.DoesNotExist:
+            form.add_error(None, "Observation not found or you don't have permission to modify it.")
+            return self.form_invalid(form)
+
+        # Handle valid form submission here
+        observation.plot = form.cleaned_data['plot']
+        observation.block = form.cleaned_data['block']
+        observation.row = form.cleaned_data['row']
+        observation.fertilization = form.cleaned_data['fertilization']
+        observation.cutting = form.cleaned_data['cutting']
+        observation.save()
+
+        self.success_url = reverse('collector:create_observation_measurements', kwargs={'id': observation.id})
+        # Return the response to indicate success
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+class ObservationMeasurementsView(LoginRequiredMixin, FormView):
+    template_name = 'collector/observation_measurements.html'
+    form_class = ObservationMeasurementForm
+    success_url = reverse_lazy('collector:create_observation_success')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['step_number'] = 3
+        context['step_count'] = 4
+        return context
+
+    def form_valid(self, form):
+
+        observation_id = self.kwargs.get('id')
+        try:
+            observation = Observation.objects.get(id=observation_id, user=self.request.user)
+        except Observation.DoesNotExist:
+            form.add_error(None, "Observation not found or you don't have permission to modify it.")
+            return self.form_invalid(form)
+
+        observation.chlorophyl = form.cleaned_data['chlorophyl']
+        observation.fungal_disease = form.cleaned_data['fungal_disease']
+        observation.eat_marks = form.cleaned_data['eat_marks']
+        observation.soil_moisture = form.cleaned_data['soil_moisture']
+        observation.electric_conductivity = form.cleaned_data['electric_conductivity']
+        observation.temperature = form.cleaned_data['temperature']
+        observation.save()
+
+        self.success_url = reverse('collector:create_observation_species', kwargs={'id': observation.id})
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class ObservationSpeciesView(LoginRequiredMixin, FormView):
+    template_name = 'collector/observation_species.html'
+    form_class = ObservationSpeciesFormSet
+    success_url = reverse_lazy('collector:create_observation_success')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['step_number'] = 4
+        context['step_count'] = 4
+        context['formset'] = ObservationSpeciesFormSet()
+        return context
+
+    def form_valid(self, formset):
+
+        observation_id = self.kwargs.get('id')
+        # Fetch the existing observation
+        try:
+            observation = Observation.objects.get(id=observation_id, user=self.request.user)
+        except Observation.DoesNotExist:
+            formset.add_error(None, "Observation not found or you don't have permission to modify it.")
+            return self.form_invalid(formset)
+
+
+        # Return the response to indicate success
+        return super().form_valid(formset)
+
+    def form_invalid(self, formset):
+        return self.render_to_response(self.get_context_data(formset=formset))
+
 
 class ObservationSuccessView(TemplateView):
     template_name = 'collector/observation_success.html'
@@ -63,3 +168,20 @@ class MapView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['observations'] = Observation.objects.all()
         return context
+
+
+class SpeciesAutocompleteView(View):
+    def get(self, request, *args, **kwargs):
+        # Check if query parameter 'q' is present in the GET request
+        query = request.GET.get('q', '')
+
+        # If query length is less than 3, return an empty list immediately
+        if len(query) < 3:
+            return JsonResponse([], safe=False)
+
+        # Filter species names based on the query (case-insensitive search)
+        species = Species.objects.filter(name__istartswith=query, user_generated=False).order_by('name')[:25]
+        suggestions = [species.name for species in species]
+
+        # Return the matching species names as a JSON response
+        return JsonResponse(suggestions, safe=False)

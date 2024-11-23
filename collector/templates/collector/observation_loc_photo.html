@@ -8,23 +8,16 @@
 <script defer src="{% static 'collector/location.js' %}"></script>
 {% endblock extra_scripts %}
 
-
 {% block content %}
 
 <h1>{% trans 'Record Observation' %}</h1>
 
-{% if form.errors %}
-    <div style="color: red;">
-        <h3>There were errors with your submission:</h3>
-        <ul>
-            {% for field, errors in form.errors.items %}
-                    {% for error in errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
+<h2>{% blocktrans with step_number=step_number step_count=step_count %}
+    Step {{ step_number }} of {{ step_count }} - Photo & Location
+{% endblocktrans %}
+</h2>
+
+{% include 'includes/form_errors.html' %}
 
 <form id="ObservationForm"  method="POST">
     {% csrf_token %}
@@ -33,7 +26,7 @@
     <canvas id="canvas" style="display: none;"></canvas>
     <img id="photo" style="display: none;" alt="Captured Photo">
     <button id="capture" type="button">Capture</button>
-    <input id="observation_image" name="observation_image">
+    {{ form.observation_image }}
 
     <h3>Location</h3>
     <label for="geo_lat">Latitude:</label>
@@ -41,13 +34,8 @@
     <br><br>
     <label for="geo_lng">Longitude:</label>
     <input type="text" id="geo_lng" name="geo_lng" readonly>
-
-    <h3>Plot</h3>
-    <label for="plot">Plot:</label>
-    <input type="text" id="plot" name="plot">
-
-    <h3></h3>
-    <button type="submit" id="submitObservation">Submit Observation</button>
+    <br><br>
+    <button type="submit" id="submitNext">Next &gt;&gt;</button>
 </form>
 
 {% endblock %}
