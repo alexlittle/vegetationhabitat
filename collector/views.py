@@ -59,5 +59,10 @@ class ObservationSuccessView(TemplateView):
 class UserLogoutView(LogoutView):
     next_page = reverse_lazy('collector:index')
 
+class MapView(LoginRequiredMixin, TemplateView):
+    template_name = 'collector/map.html'
 
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['observations'] = Observation.objects.all()
+        return context

@@ -14,5 +14,6 @@ urlpatterns = [
     path("", views.HomeView.as_view(), name="index"),
     path("observation/create", views.RecordObservationView.as_view(), name="create_observation"),
     path("observation/create/success", views.ObservationSuccessView.as_view(), name="create_observation_success"),
+    path("map", views.MapView.as_view(), name="map"),
 ]
 
