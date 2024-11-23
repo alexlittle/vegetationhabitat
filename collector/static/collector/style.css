@@ -53,6 +53,9 @@ body {
 	padding: 5px 20px 3px 10px;
 }
 
+.navbar-nav > li {
+    margin-right:10px;
+}
 
 .navbar-light .navbar-nav > .nav-item > a
 {

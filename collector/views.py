@@ -21,9 +21,6 @@ class RecordObservationView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('collector:create_observation_success')
 
     def form_valid(self, form):
-        if not form.is_valid():
-            # Handle form validation errors here
-            return self.form_invalid(form)
 
         # Handle valid form submission here
         observation_image = form.cleaned_data['observation_image']
