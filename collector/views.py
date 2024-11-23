@@ -9,7 +9,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.timezone import now
 from django.http import JsonResponse
 from .forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
-from .models import Observation, Species
+from .models import Observation, Species, ObservationSpecies
 
 class HomeView(TemplateView):
     template_name = 'collector/home.html'
@@ -146,6 +146,23 @@ class ObservationSpeciesView(LoginRequiredMixin, FormView):
             formset.add_error(None, "Observation not found or you don't have permission to modify it.")
             return self.form_invalid(formset)
 
+        for form in formset:
+            if form.is_valid():
+                u_species = form.cleaned_data.get('species')
+                coverage = form.cleaned_data.get('coverage')
+
+                if u_species:
+                    species, created = Species.objects.get_or_create(
+                            name=u_species,
+                            defaults={"user_generated": True,
+                                      "name": u_species}
+                        )
+
+                    observation_species = ObservationSpecies()
+                    observation_species.observation = observation
+                    observation_species.species = species
+                    observation_species.coverage = coverage
+                    observation_species.save()
 
         # Return the response to indicate success
         return super().form_valid(formset)

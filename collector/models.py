@@ -35,6 +35,6 @@ class Species(models.Model):
 
 class ObservationSpecies(models.Model):
     observation = models.ForeignKey(Observation, null=False, on_delete=models.CASCADE)
-    species = models.ForeignKey(Species, null=False, on_delete=models.CASCADE)
+    species = models.ForeignKey(Species, null=True, on_delete=models.CASCADE)
     coverage = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True, default=None)
 

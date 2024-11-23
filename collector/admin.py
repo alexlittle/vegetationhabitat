@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from collector.models import Observation, Species
+from collector.models import Observation, Species, ObservationSpecies
 
 
 @admin.register(Observation)
@@ -17,3 +17,7 @@ class ObservationAdmin(admin.ModelAdmin):
 class SpeciesAdmin(admin.ModelAdmin):
     list_display = ('name', 'user_generated')
     search_fields = ('name',)
+
+@admin.register(ObservationSpecies)
+class ObservationSpeciesAdmin(admin.ModelAdmin):
+    list_display = ('observation', 'species', 'coverage')
