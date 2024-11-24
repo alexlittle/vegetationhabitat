@@ -4,7 +4,6 @@ from django.contrib.auth.views import LoginView
 from collector import views
 
 from .forms import UserLoginForm
-from .views.wizard import ObservationWizard
 
 app_name = 'collector'
 urlpatterns = [
@@ -15,7 +14,7 @@ urlpatterns = [
             ), name='login'),
     path('logout/', views.UserLogoutView.as_view(), name='logout'),
 
-    path('observation/wizard/', ObservationWizard.as_view(), name='observation_wizard'),
+    path('observation/wizard/', views.ObservationWizard.as_view(), name='observation_wizard'),
     path("observation/wizard/success", views.ObservationSuccessView.as_view(), name="create_observation_success"),
     path("map", views.MapView.as_view(), name="map"),
     path('species-autocomplete/', views.SpeciesAutocompleteView.as_view(), name='species_autocomplete'),

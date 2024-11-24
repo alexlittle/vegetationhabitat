@@ -7,9 +7,18 @@ from django.core.files.base import ContentFile
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import TemplateView
 
-from collector.models import Observation
+from collector.models import Observation, Species, ObservationSpecies
 from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
+
+
+
+class ObservationSuccessView(TemplateView):
+    template_name = 'collector/wizard/success.html'
+
 
 TEMPLATES = {"locphoto": 'collector/wizard/loc_photo.html',
              "plot": 'collector/wizard/plot.html',
@@ -29,12 +38,8 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         step = step or self.steps.current
         if step == "species":
             if data:
-                # Initialize with POST data
-                print("getting existing formset")
                 return ObservationSpeciesFormSet(data=data)
             else:
-                # Initialize without data for a GET request
-                print("getting new formset")
                 return ObservationSpeciesFormSet()
         return super().get_form(step, data, files)
 
@@ -51,7 +56,7 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
                 self.process_step(current_form)
 
             self.storage.current_step = goto_step
-            print(f"Going back to step {goto_step}")
+            #print(f"Going back to step {goto_step}")
             return self.render_goto_step(goto_step)
 
         return super().post(*args, **kwargs)
@@ -95,6 +100,10 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         measure = form_dict['measure']
         species = form_dict['species']
 
+        if not species.is_valid():
+            return self.render(form_dict)
+
+
         # process image
         image = locphoto['observation_image'].value()
         header, obs_image_encoded = image.split(",", 1)  # Split the header and the base64 data
@@ -116,7 +125,25 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         observation.soil_moisture = measure['soil_moisture'].value() if measure['soil_moisture'].value() != '' else None
         observation.electric_conductivity = measure['electric_conductivity'].value() if measure['electric_conductivity'].value()  != '' else None
         observation.temperature = measure['temperature'].value() if measure['temperature'].value() != '' else None
-
         observation.save()
+
+
+        for form in species:
+            if form.is_valid():
+                u_species = form.cleaned_data.get('species')
+                coverage = form.cleaned_data.get('coverage')
+
+                if u_species:
+                    species, created = Species.objects.get_or_create(
+                        name=u_species,
+                        defaults={"user_generated": True,
+                                  "name": u_species}
+                    )
+
+                    observation_species = ObservationSpecies()
+                    observation_species.observation = observation
+                    observation_species.species = species
+                    observation_species.coverage = coverage
+                    observation_species.save()
 
         return HttpResponseRedirect(reverse_lazy('collector:create_observation_success'))

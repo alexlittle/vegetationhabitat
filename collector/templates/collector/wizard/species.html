@@ -21,11 +21,31 @@
 <h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} - Species</h2>
 
 
+
 <form id="ObservationForm"  method="POST">
     {% csrf_token %}
      {{ wizard.management_form }}
 
-        {{ wizard.form.management_form }}
+    {{ wizard.form.management_form }}
+
+{% if wizard.form.errors %}
+    <div style="color: red;">
+        <h3>There were errors with your submission:</h3>
+        {{ wizard.form.non_form_errors }}
+        <ul>
+            {% for form_errors in wizard.form.errors %}
+                {% for k, errors in form_errors.items %}
+                    {% if k == '__all__' %}
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
 
     {% for form in wizard.form.forms %}
             {% for field in form %}
