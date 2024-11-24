@@ -8,7 +8,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Path to CSV file
-        csv_file_path = '/home/alex/Downloads/species.csv'  # Replace with actual path
+        csv_file_path = '/path/to/species.csv'  # Replace with actual path
 
         # Read the CSV file and import the data
         try:
