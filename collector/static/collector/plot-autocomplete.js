@@ -2,7 +2,7 @@ const data = document.currentScript.dataset;
 const autoCompleteURL = data.plotacurl;
 
 $(document).ready(function () {
-    const $plotField = $('#id_plot');
+    const $plotField = $('#id_plot-plot');
     const $suggestions = $('#suggestions');
     const $properties = $('#properties');
 

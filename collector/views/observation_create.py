@@ -3,15 +3,13 @@ import base64
 from django.core.files.base import ContentFile
 from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
-from django.views import View
 from django.utils.timezone import now
-from django.http import JsonResponse
-from django.db.models import Prefetch
 
 from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
-from collector.models import Observation, Species, ObservationSpecies, Plot, PlotProperties
+from collector.models import Observation, Species, ObservationSpecies
+
+
 
 
 

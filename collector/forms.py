@@ -15,13 +15,13 @@ class ObservationPlotForm(forms.Form):
         ('1', _('Yes')),
         ('0', _('No')),
     ]
-    plot = forms.CharField(required = True,
+    plot = forms.CharField(required = False,
                            widget=forms.TextInput(attrs={'class': 'form-control'}),
                            error_messages={"required": _("Please enter a plot")})
-    block = forms.CharField(required=True,
+    block = forms.CharField(required=False,
                             widget=forms.TextInput(attrs={'class': 'form-control'}),
                             error_messages={"required": _("Please enter a block")})
-    row = forms.CharField(required=True,
+    row = forms.CharField(required=False,
                           widget=forms.TextInput(attrs={'class': 'form-control'}),
                           error_messages={"required": _("Please enter a row")})
     '''

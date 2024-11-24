@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+
+{% block extra_styles %}
+
+{% endblock extra_styles %}
+
+{% block extra_scripts %}
+<script defer src="{% static 'collector/species-autocomplete.js' %}"
+    data-speciesacurl="{% url 'collector:species_autocomplete' %}">
+</script>
+{% endblock extra_scripts %}
+
+
+{% block content %}
+
+<h1>{% trans 'Record Observation' %}</h1>
+
+<h2>{% blocktrans with step_number=step_number step_count=step_count %}
+    Step {{ step_number }} of {{ step_count }} - Species
+{% endblocktrans %}
+</h2>
+
+{% include 'includes/form_errors.html' %}
+
+<form id="ObservationForm"  method="POST">
+    {% csrf_token %}
+
+    {{ formset.management_form }}
+
+    {% for form in formset %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                </div>
+            {% endfor %}
+    {% endfor %}
+
+    <button type="submit" id="submitObservation">Submit Observation</button>
+</form>
+{{ form.media.js }}
+{% endblock %}

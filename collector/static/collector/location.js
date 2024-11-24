@@ -8,8 +8,8 @@
 
 // Function to display the position in the form fields
 function showPosition(position) {
-  document.getElementById("geo_lat").value = position.coords.latitude;
-  document.getElementById("geo_lng").value = position.coords.longitude;
+  document.getElementById("id_locphoto-geo_lat").value = position.coords.latitude;
+  document.getElementById("id_locphoto-geo_lng").value = position.coords.longitude;
 }
 
 // Function to handle errors

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extra_scripts %}
+<script defer src="{% static 'collector/plot-autocomplete.js' %}"
+    data-plotacurl="{% url 'collector:plot_autocomplete' %}">
+</script>
+{% endblock extra_scripts %}
+
+{% block content %}
+
+<h1>{% trans 'Record Observation' %}</h1>
+
+<h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} - Plot</h2>
+
+{% include 'includes/form_errors.html' %}
+
+<form id="ObservationForm" method="POST">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+        <div class="form-group">
+    <label for="id_plot-plot">Plot:</label>
+      <input type="text" id="id_plot-plot" name="plot-plot" autocomplete="off" class="form-control"
+             value="{{ form.plot.value|default:'' }}"
+             placeholder="Start typing the plot code">
+      <ul id="suggestions" style="border: 1px solid #ccc; list-style: none; padding: 0; display: none; position: absolute; background: white; max-height: 200px; overflow-y: auto;"></ul>
+      <div id="properties" style="margin-top: 10px;"></div>
+     </div>
+    <div class="form-group">
+        <label for="id_plot-block">Block:</label>
+        <input type="text" id="id_plot-block" name="plot-block" autocomplete="off"
+               value="{{ form.block.value|default:'' }}"
+               class="form-control" >
+    </div>
+     <div class="form-group">
+        <label for="id_plot-row">Row:</label>
+        <input type="text" id="id_plot-row" name="plot-row" autocomplete="off" class="form-control" value="{{ form.row.value|default:'' }}" >
+    </div>
+
+    {% if wizard.steps.prev %}
+        <button type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
+    {% endif %}
+
+    <button type="submit" id="submit">Next &gt;&gt;</button>
+</form>
+
+{% endblock %}

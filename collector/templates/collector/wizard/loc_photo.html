@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+
+{% block extra_scripts %}
+<script defer src="{% static 'collector/camera.js' %}"></script>
+<script defer src="{% static 'collector/location.js' %}"></script>
+{{ wizard.form.media }}
+{% endblock extra_scripts %}
+
+{% block content %}
+
+<h1>{% trans 'Record Observation' %}</h1>
+
+<h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} - Photo and Location</h2>
+
+{% include 'includes/form_errors.html' %}
+
+<form id="ObservationForm"  method="POST">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+    <h3>Capture Photo</h3>
+    <video id="video" autoplay></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <img id="photo" style="display: none;" alt="Captured Photo">
+    <button id="capture" type="button">Capture</button>
+    {{ wizard.form.observation_image }}
+
+    <h3>Location</h3>
+    <label for="id_locphoto-geo_lat">Latitude:</label>
+        <input type="text" id="id_locphoto-geo_lat" name="locphoto-geo_lat" readonly>
+    <br><br>
+    <label for="id_locphoto-geo_lng">Longitude:</label>
+    <input type="text" id="id_locphoto-geo_lng" name="locphoto-geo_lng" readonly>
+    <br><br>
+
+    <button type="submit" id="submit">Next &gt;&gt;</button>
+</form>
+
+{% endblock %}

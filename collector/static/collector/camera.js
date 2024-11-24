@@ -3,7 +3,7 @@ const canvas = document.getElementById('canvas');
 const photo = document.getElementById('photo');
 const captureButton = document.getElementById('capture');
 const photoForm = document.getElementById('ObservationForm');
-const photoDataInput = document.getElementById('id_observation_image');
+const photoDataInput = document.getElementById('id_locphoto-observation_image');
 const context = canvas.getContext('2d');
 
 let stream;
