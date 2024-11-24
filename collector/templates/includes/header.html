@@ -1,6 +1,6 @@
 {% load i18n %}
 {% load static %}
-{% block content %}
+
 	    <!-- Image and text -->
 <nav id="navbar" class="navbar navbar-light navbar-expand-lg">
   <div class="container-fluid">
@@ -14,16 +14,16 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarScroll">
       <ul class="navbar-nav ms-auto my-2 my-lg-0 navbar-nav-scroll" >
         {% if user.is_authenticated %}
-            <li>Welcome, {{ user.username }}</li>
-            <li><a href="{% url 'admin:collector_observation_changelist' %}">View Observations</a></li>
-            <li><a href="{% url 'collector:map' %}">Map</a></li>
+            <li>{% trans 'Welcome' %}, {{ user.username }}</li>
+            <li><a href="{% url 'admin:collector_observation_changelist' %}">{% trans 'View Observations' %}</a></li>
+            <li><a href="{% url 'collector:map' %}">{% trans 'Map' %}</a></li>
             <li> <form method="post" action="{% url 'collector:logout' %}" style="display: inline;">
                 {% csrf_token %}
-            <button type="submit">Logout</button>
+            <button type="submit">{% trans 'Logout' %}</button>
          </form></li>
 
         {% else %}
-            <li><a href="{% url 'collector:login' %}">Login</a></li>
+            <li><a href="{% url 'collector:login' %}">{% trans 'Login' %}</a></li>
         {% endif %}
     </ul>
 
@@ -33,4 +33,3 @@
 
 	    
 	    
-{% endblock content %}

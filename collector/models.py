@@ -25,10 +25,21 @@ class Observation(models.Model):
     electric_conductivity = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=None)
     temperature = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=None)
 
+    class Meta:
+        verbose_name = _('Observation')
+        verbose_name_plural = _('Observations')
+        ordering = ['-create_date']
+
+    def __str__(self):
+        return f"{self.user.username}-{self.create_date.strftime('%Y%m%d_%H%M%S')}"
 
 class Species(models.Model):
     name = models.CharField(max_length=200)
     user_generated = models.BooleanField(default=False, blank=False, null=False)
+
+    class Meta:
+        verbose_name = _('Species')
+        verbose_name_plural = _('Species')
 
     def __str__(self):
         return self.name
@@ -37,4 +48,8 @@ class ObservationSpecies(models.Model):
     observation = models.ForeignKey(Observation, null=False, on_delete=models.CASCADE)
     species = models.ForeignKey(Species, null=True, on_delete=models.CASCADE)
     coverage = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True, default=None)
+
+    class Meta:
+        verbose_name = _('ObservationSpecies')
+        verbose_name_plural = _('ObservationSpecies')
 

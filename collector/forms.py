@@ -1,37 +1,37 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.forms import formset_factory
-
+from django.utils.translation import gettext_lazy as _
 
 class ObservationLocationPhotoForm(forms.Form):
     observation_image = forms.CharField(required = True,
-                           error_messages={"required": "Please capture an image"})
+                           error_messages={"required": _("Please capture an image")})
     geo_lat = forms.CharField()
     geo_lng = forms.CharField()
 
 
 class ObservationPlotForm(forms.Form):
     YES_NO_CHOICES = [
-        ('1', 'Yes'),
-        ('0', 'No'),
+        ('1', _('Yes')),
+        ('0', _('No')),
     ]
     plot = forms.CharField(required = True,
                            widget=forms.TextInput(attrs={'class': 'form-control'}),
-                           error_messages={"required": "Please enter a plot"})
+                           error_messages={"required": _("Please enter a plot")})
     block = forms.CharField(required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}),
-                            error_messages={"required": "Please enter a block"})
+                            error_messages={"required": _("Please enter a block")})
     row = forms.CharField(required=True,
                           widget=forms.TextInput(attrs={'class': 'form-control'}),
-                          error_messages={"required": "Please enter a row"})
+                          error_messages={"required": _("Please enter a row")})
     fertilization = forms.ChoiceField(required=True,
                                       choices=YES_NO_CHOICES,
                                       widget=forms.RadioSelect,
-                          error_messages={"required": "Please enter fertilization"})
+                          error_messages={"required": _("Please enter fertilization")})
     cutting = forms.ChoiceField(required=True,
                                         choices=YES_NO_CHOICES,
                                     widget=forms.RadioSelect,
-                          error_messages={"required": "Please enter cutting"})
+                          error_messages={"required": _("Please enter cutting")})
 
 class ObservationMeasurementForm(forms.Form):
     chlorophyl = forms.DecimalField(
@@ -67,9 +67,16 @@ class ObservationMeasurementForm(forms.Form):
 
 class ObservationSpeciesForm(forms.Form):
     species = forms.CharField(required = True,
-                           widget=forms.TextInput(attrs={'class': 'form-control'}),
-                           error_messages={"required": "Please enter a species"})
-    coverage = forms.DecimalField(max_digits=4, decimal_places=2, required=False, initial=None, min_value=0, max_value=100)
+                           widget=forms.TextInput(attrs={'class': 'form-control',
+                                                         'placeholder': _('Start typing the species name')}),
+                           error_messages={"required": _("Please enter a species")})
+    coverage = forms.DecimalField(max_digits=4,
+                                  decimal_places=2,
+                                  required=False,
+                                  initial=None,
+                                  min_value=0,
+                                  max_value=100,
+                                  widget=forms.NumberInput(attrs={'class': 'form-control'}),)
 
 ObservationSpeciesFormSet = formset_factory(ObservationSpeciesForm,  extra=3, min_num=1)
 
@@ -79,11 +86,10 @@ class UserLoginForm(AuthenticationForm):
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
     username = UsernameField(widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': '', 'id': 'hello'}))
+        attrs={'class': 'form-control', 'placeholder': ''}))
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
-            'placeholder': '',
-            'id': 'hi',
+            'placeholder': ''
         }
 ))
