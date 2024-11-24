@@ -3,16 +3,17 @@ import base64
 from django.core.files.base import ContentFile
 from django.views.generic import TemplateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView, LogoutView
-from django.views import View
+from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy, reverse
+from django.views import View
 from django.utils.timezone import now
 from django.http import JsonResponse
-from .forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
-from .models import Observation, Species, ObservationSpecies
+from django.db.models import Prefetch
 
-class HomeView(TemplateView):
-    template_name = 'collector/home.html'
+from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
+from collector.models import Observation, Species, ObservationSpecies, Plot, PlotProperties
+
+
 
 class ObservationLocationPhotoView(LoginRequiredMixin, FormView):
     template_name = 'collector/observation_loc_photo.html'
@@ -53,6 +54,7 @@ class ObservationLocationPhotoView(LoginRequiredMixin, FormView):
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
 
+
 class ObservationPlotView(LoginRequiredMixin, FormView):
     template_name = 'collector/observation_plot.html'
     form_class = ObservationPlotForm
@@ -78,8 +80,6 @@ class ObservationPlotView(LoginRequiredMixin, FormView):
         observation.plot = form.cleaned_data['plot']
         observation.block = form.cleaned_data['block']
         observation.row = form.cleaned_data['row']
-        observation.fertilization = form.cleaned_data['fertilization']
-        observation.cutting = form.cleaned_data['cutting']
         observation.save()
 
         self.success_url = reverse('collector:create_observation_measurements', kwargs={'id': observation.id})
@@ -88,6 +88,7 @@ class ObservationPlotView(LoginRequiredMixin, FormView):
 
     def form_invalid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
+
 
 class ObservationMeasurementsView(LoginRequiredMixin, FormView):
     template_name = 'collector/observation_measurements.html'
@@ -175,30 +176,7 @@ class ObservationSuccessView(TemplateView):
     template_name = 'collector/observation_success.html'
 
 
-class UserLogoutView(LogoutView):
-    next_page = reverse_lazy('collector:index')
-
-class MapView(LoginRequiredMixin, TemplateView):
-    template_name = 'collector/map.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['observations'] = Observation.objects.all()
-        return context
 
 
-class SpeciesAutocompleteView(View):
-    def get(self, request, *args, **kwargs):
-        # Check if query parameter 'q' is present in the GET request
-        query = request.GET.get('q', '')
 
-        # If query length is less than 3, return an empty list immediately
-        if len(query) < 3:
-            return JsonResponse([], safe=False)
 
-        # Filter species names based on the query (case-insensitive search)
-        species = Species.objects.filter(name__istartswith=query, user_generated=False).order_by('name')[:25]
-        suggestions = [species.name for species in species]
-
-        # Return the matching species names as a JSON response
-        return JsonResponse(suggestions, safe=False)

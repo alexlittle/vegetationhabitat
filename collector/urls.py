@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.contrib.auth.views import LoginView
 
 from collector import views
 
@@ -7,7 +8,7 @@ from .forms import UserLoginForm
 app_name = 'collector'
 urlpatterns = [
     path("", views.HomeView.as_view(), name="index"),
-    path('login/', views.LoginView.as_view(
+    path('login/', LoginView.as_view(
             template_name="collector/login.html",
             authentication_form=UserLoginForm
             ), name='login'),
@@ -20,5 +21,6 @@ urlpatterns = [
     path("observation/create/success", views.ObservationSuccessView.as_view(), name="create_observation_success"),
     path("map", views.MapView.as_view(), name="map"),
     path('species-autocomplete/', views.SpeciesAutocompleteView.as_view(), name='species_autocomplete'),
+    path('plot-autocomplete/', views.PlotAutocompleteView.as_view(), name='plot_autocomplete'),
 ]
 

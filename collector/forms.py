@@ -24,6 +24,7 @@ class ObservationPlotForm(forms.Form):
     row = forms.CharField(required=True,
                           widget=forms.TextInput(attrs={'class': 'form-control'}),
                           error_messages={"required": _("Please enter a row")})
+    '''
     fertilization = forms.ChoiceField(required=True,
                                       choices=YES_NO_CHOICES,
                                       widget=forms.RadioSelect,
@@ -32,6 +33,8 @@ class ObservationPlotForm(forms.Form):
                                         choices=YES_NO_CHOICES,
                                     widget=forms.RadioSelect,
                           error_messages={"required": _("Please enter cutting")})
+    '''
+
 
 class ObservationMeasurementForm(forms.Form):
     chlorophyl = forms.DecimalField(

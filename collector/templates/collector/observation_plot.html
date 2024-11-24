@@ -2,6 +2,11 @@
 {% load i18n %}
 {% load static %}
 
+{% block extra_scripts %}
+<script defer src="{% static 'collector/plot-autocomplete.js' %}"
+    data-plotacurl="{% url 'collector:plot_autocomplete' %}">
+</script>
+{% endblock extra_scripts %}
 
 {% block content %}
 
@@ -17,12 +22,20 @@
 <form id="ObservationForm"  method="POST">
     {% csrf_token %}
 
-    {% for field in form %}
-        <div class="form-group">
-            {{ field.label_tag }}
-            {{ field }}
-        </div>
-    {% endfor %}
+    <div class="form-group">
+    <label for="id_plot">Plot:</label>
+      <input type="text" id="id_plot" name="plot" autocomplete="off" class="form-control" required placeholder="Start typing the plot code">
+      <ul id="suggestions" style="border: 1px solid #ccc; list-style: none; padding: 0; display: none; position: absolute; background: white; max-height: 200px; overflow-y: auto;"></ul>
+      <div id="properties" style="margin-top: 10px;"></div>
+     </div>
+    <div class="form-group">
+        {{ form.block.label_tag }}
+        {{ form.block }}
+    </div>
+     <div class="form-group">
+        {{ form.row.label_tag }}
+        {{ form.row }}
+    </div>
 
     <button type="submit" id="submitNext">Next &gt;&gt;</button>
 </form>

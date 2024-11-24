@@ -33,6 +33,7 @@ class Observation(models.Model):
     def __str__(self):
         return f"{self.user.username}-{self.create_date.strftime('%Y%m%d_%H%M%S')}"
 
+
 class Species(models.Model):
     name = models.CharField(max_length=200)
     user_generated = models.BooleanField(default=False, blank=False, null=False)
@@ -40,9 +41,11 @@ class Species(models.Model):
     class Meta:
         verbose_name = _('Species')
         verbose_name_plural = _('Species')
+        indexes = [models.Index(fields=['name']),]
 
     def __str__(self):
         return self.name
+
 
 class ObservationSpecies(models.Model):
     observation = models.ForeignKey(Observation, null=False, on_delete=models.CASCADE)
@@ -53,3 +56,20 @@ class ObservationSpecies(models.Model):
         verbose_name = _('ObservationSpecies')
         verbose_name_plural = _('ObservationSpecies')
 
+
+class Plot(models.Model):
+    code = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = _('Plot')
+        verbose_name_plural = _('Plots')
+
+
+class PlotProperties(models.Model):
+    plot = models.ForeignKey(Plot, null=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20)
+    value = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = _('Plot Property')
+        verbose_name_plural = _('Plot Properties')
