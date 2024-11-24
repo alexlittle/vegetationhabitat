@@ -1,30 +1,42 @@
 import base64
-import collector
 
+from django.forms import BaseFormSet
 from formtools.wizard.views import SessionWizardView
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.base import ContentFile
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 
 from collector.models import Observation
-
-
-OLD_FORMS = [("locphoto", collector.forms.ObservationLocationPhotoForm),
-         ("plot", collector.forms.ObservationPlotForm),
-         ("measure", collector.forms.ObservationMeasurementForm),
-         ("species", collector.forms.ObservationSpeciesForm)]
+from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
 
 TEMPLATES = {"locphoto": 'collector/wizard/loc_photo.html',
              "plot": 'collector/wizard/plot.html',
              "measure": 'collector/wizard/measurements.html',
              "species": 'collector/wizard/species.html'}
 
-class ObservationWizard(SessionWizardView):
-    form_list = [("locphoto", collector.forms.ObservationLocationPhotoForm),
-                 ("plot", collector.forms.ObservationPlotForm),
-                 ("measure", collector.forms.ObservationMeasurementForm),]
+class ObservationWizard(LoginRequiredMixin, SessionWizardView):
+    form_list = [("locphoto", ObservationLocationPhotoForm),
+                 ("plot", ObservationPlotForm),
+                 ("measure", ObservationMeasurementForm),
+                 ("species", ObservationSpeciesFormSet)]
+
+    def get_form(self, step=None, data=None, files=None):
+        """
+        Override to handle formset for 'species' step.
+        """
+        step = step or self.steps.current
+        if step == "species":
+            if data:
+                # Initialize with POST data
+                print("getting existing formset")
+                return ObservationSpeciesFormSet(data=data)
+            else:
+                # Initialize without data for a GET request
+                print("getting new formset")
+                return ObservationSpeciesFormSet()
+        return super().get_form(step, data, files)
 
     def post(self, *args, **kwargs):
         """
@@ -46,11 +58,21 @@ class ObservationWizard(SessionWizardView):
 
     def process_step(self, form):
         """
-        Save the current step's form data to storage, even if incomplete.
+        Save formset data for the 'species' step.
         """
-        step_data = form.data  # Use form.data to ensure even incomplete data is saved
-        print(f"Saving data for step {self.steps.current}: {step_data}")
-        self.storage.set_step_data(self.steps.current, step_data)
+        if self.steps.current == "species" and isinstance(BaseFormSet, ObservationSpeciesFormSet):
+            step_data = {
+                f"form-{i}-{key}": value
+                for i, form_data in enumerate(form.cleaned_data)
+                if form_data
+                for key, value in form_data.items()
+            }
+            self.storage.set_step_data(self.steps.current, step_data)
+        else:
+            step_data = form.data  # Use form.data to ensure even incomplete data is saved
+            #print(f"Saving data for step {self.steps.current}: {step_data}")
+            self.storage.set_step_data(self.steps.current, step_data)
+
         return super().process_step(form)
 
     def get_form_initial(self, step):
@@ -58,7 +80,7 @@ class ObservationWizard(SessionWizardView):
         Load previously saved data into the form fields when revisiting a step.
         """
         step_data = self.storage.get_step_data(step)
-        print(f"Loading data for step {step}: {step_data}")
+        #print(f"Loading data for step {step}: {step_data}")
         if step_data:
             return {key: value for key, value in step_data.items()}
         return {}
@@ -69,11 +91,12 @@ class ObservationWizard(SessionWizardView):
     def done(self, form_list, form_dict, **kwargs):
 
         locphoto = form_dict['locphoto']
-        image = locphoto['observation_image'].value()
-        geo_lat = locphoto['geo_lat'].value()
-        geo_lng = locphoto['geo_lng'].value()
-        # process image
+        plot = form_dict['plot']
+        measure = form_dict['measure']
+        species = form_dict['species']
 
+        # process image
+        image = locphoto['observation_image'].value()
         header, obs_image_encoded = image.split(",", 1)  # Split the header and the base64 data
         obs_image_decoded_data = base64.b64decode(obs_image_encoded)
         timestamp = now().strftime('%Y%m%d_%H%M%S')  # Format: YYYYMMDD_HHMMSS
@@ -81,9 +104,19 @@ class ObservationWizard(SessionWizardView):
 
         observation = Observation()
         observation.user = self.request.user
-        observation.geo_lat = geo_lat
-        observation.geo_lng = geo_lng
-        #observation.image.save(filename, ContentFile(obs_image_decoded_data))
+        observation.image.save(filename, ContentFile(obs_image_decoded_data))
+        observation.geo_lat = locphoto['geo_lat'].value()
+        observation.geo_lng = locphoto['geo_lng'].value()
+        observation.plot = plot['plot'].value()
+        observation.block = plot['block'].value()
+        observation.row = plot['row'].value()
+        observation.chlorophyl = measure['chlorophyl'].value() if measure['chlorophyl'].value() != '' else None
+        observation.fungal_disease = measure['fungal_disease'].value() if measure['fungal_disease'].value() != '' else None
+        observation.eat_marks = measure['eat_marks'].value() if measure['eat_marks'].value() != '' else None
+        observation.soil_moisture = measure['soil_moisture'].value() if measure['soil_moisture'].value() != '' else None
+        observation.electric_conductivity = measure['electric_conductivity'].value() if measure['electric_conductivity'].value()  != '' else None
+        observation.temperature = measure['temperature'].value() if measure['temperature'].value() != '' else None
+
         observation.save()
 
         return HttpResponseRedirect(reverse_lazy('collector:create_observation_success'))

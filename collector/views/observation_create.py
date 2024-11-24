@@ -10,9 +10,6 @@ from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, O
 from collector.models import Observation, Species, ObservationSpecies
 
 
-
-
-
 class ObservationLocationPhotoView(LoginRequiredMixin, FormView):
     template_name = 'collector/observation_loc_photo.html'
     form_class = ObservationLocationPhotoForm
@@ -171,7 +168,7 @@ class ObservationSpeciesView(LoginRequiredMixin, FormView):
 
 
 class ObservationSuccessView(TemplateView):
-    template_name = 'collector/observation_success.html'
+    template_name = 'collector/wizard/success.html'
 
 
 

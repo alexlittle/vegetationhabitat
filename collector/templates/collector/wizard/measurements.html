@@ -10,20 +10,11 @@
 
 <h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} - Measurements</h2>
 
-{% include 'includes/form_errors.html' %}
 
 <form id="ObservationForm"  method="POST">
     {% csrf_token %}
        {{ wizard.management_form }}
-
-    {% if wizard.form.forms %}
-    {{ wizard.form.management_form }}
-    {% for form in wizard.form.forms %}
-        {{ form.as_table }}
-    {% endfor %}
-{% else %}
-    {{ wizard.form }}
-{% endif %}
+        {{ wizard.form }}
 
     {% if wizard.steps.prev %}
         <button type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>

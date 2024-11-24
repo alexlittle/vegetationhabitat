@@ -106,6 +106,14 @@ video, canvas, img {
     margin-bottom: 10px;
 }
 
+.errorlist {
+    color: red;
+}
+
+.helptext {
+    font-size: small;
+}
+
 .autocomplete-results {
     position: absolute;
     border: 1px solid #ccc;
