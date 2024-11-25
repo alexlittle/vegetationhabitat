@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
 
-from collector.models import Observation, Species, ObservationSpecies
+from collector.models import Observation, Species, ObservationSpecies, Plot
 from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
 
 
@@ -100,10 +100,6 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         measure = form_dict['measure']
         species = form_dict['species']
 
-        if not species.is_valid():
-            return self.render(form_dict)
-
-
         # process image
         image = locphoto['observation_image'].value()
         header, obs_image_encoded = image.split(",", 1)  # Split the header and the base64 data
@@ -111,12 +107,19 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         timestamp = now().strftime('%Y%m%d_%H%M%S')  # Format: YYYYMMDD_HHMMSS
         filename = f"{timestamp}_user_{self.request.user.id}.png"
 
+        # get or create plot_obj
+        plot_obj, created = Plot.objects.get_or_create(
+            code=plot['plot'].value(),
+            defaults={"source": 'user',
+                      "code": plot['plot'].value()}
+        )
+
         observation = Observation()
         observation.user = self.request.user
         observation.image.save(filename, ContentFile(obs_image_decoded_data))
         observation.geo_lat = locphoto['geo_lat'].value()
         observation.geo_lng = locphoto['geo_lng'].value()
-        observation.plot = plot['plot'].value()
+        observation.plot = plot_obj
         observation.block = plot['block'].value()
         observation.row = plot['row'].value()
         observation.chlorophyl = measure['chlorophyl'].value() if measure['chlorophyl'].value() != '' else None
@@ -129,21 +132,20 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
 
 
         for form in species:
-            if form.is_valid():
-                u_species = form.cleaned_data.get('species')
-                coverage = form.cleaned_data.get('coverage')
+            u_species = form.cleaned_data.get('species')
+            coverage = form.cleaned_data.get('coverage')
 
-                if u_species:
-                    species, created = Species.objects.get_or_create(
-                        name=u_species,
-                        defaults={"user_generated": True,
-                                  "name": u_species}
-                    )
+            if u_species:
+                species, created = Species.objects.get_or_create(
+                    name=u_species,
+                    defaults={"user_generated": True,
+                              "name": u_species}
+                )
 
-                    observation_species = ObservationSpecies()
-                    observation_species.observation = observation
-                    observation_species.species = species
-                    observation_species.coverage = coverage
-                    observation_species.save()
+                observation_species = ObservationSpecies()
+                observation_species.observation = observation
+                observation_species.species = species
+                observation_species.coverage = coverage
+                observation_species.save()
 
         return HttpResponseRedirect(reverse_lazy('collector:create_observation_success'))

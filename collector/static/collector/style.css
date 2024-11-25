@@ -148,6 +148,10 @@ video, canvas, img {
     background-color: #f1f1f1;
 }
 
+.field-title {
+    font-weight: bold;
+}
+
 
 /* RESPONSIVE CSS
 -------------------------------------------------- */

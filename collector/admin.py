@@ -13,7 +13,7 @@ class PlotPropertiesInline(admin.TabularInline):
 
 @admin.register(Observation)
 class ObservationAdmin(admin.ModelAdmin):
-    list_display = ('image_thumb', 'user', 'create_date', 'geo_lat', 'geo_lng', 'plot')
+    list_display = ('image_thumb', 'user', 'create_date', 'geo_lat', 'geo_lng')
     readonly_fields = ('image_thumb',)
 
     inlines = [

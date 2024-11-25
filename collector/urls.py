@@ -20,6 +20,8 @@ urlpatterns = [
     path('species-autocomplete/', views.SpeciesAutocompleteView.as_view(), name='species_autocomplete'),
     path('plot-autocomplete/', views.PlotAutocompleteView.as_view(), name='plot_autocomplete'),
 
+    path('profile/observations', views.UserObservationsView.as_view(), name='profile_observations'),
+
 
 ]
 

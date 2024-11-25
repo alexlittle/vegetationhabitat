@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+{% load thumbnail %}
+
+{% block content %}
+
+<h1>{% trans 'Your Observations' %}</h1>
+
+{% include 'includes/pagination.html' %}
+
+<div class="container my-5">
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Date/time</th>
+                        <th>Image/Location</th>
+                        <th>Plot</th>
+                        <th>Measurements</th>
+                        <th>Species</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for o in observations %}
+                        <tr>
+                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td>{{ o.create_date }}</td>
+                            <td>
+                                {% thumbnail o.image "200x200" as thumb %}
+                                <img src="{{ thumb.url }}">
+                                {% endthumbnail %}
+                                <br/>
+                                <a target="_blank"
+                                   href="https://www.openstreetmap.org/?mlat={{ o.geo_lat }}&mlon={{ o.geo_lng }}">
+                                    {{ o.geo_lat }},{{ o.geo_lng }}
+                                </a></td>
+                            <td><span class="field-title">{% trans 'Plot' %}</span>: {{ o.plot }}<br/>
+                                {% if o.plot.plotproperties_set.all %}
+                                <ul>
+                                    {% for property in o.plot.plotproperties_set.all %}
+                                      <li><span class="field-title">{{ property.name }}</span>: {{ property.value }}</li>
+                                    {% endfor %}
+                                  </ul>
+                                {% endif %}
+                                <span class="field-title">{% trans 'Block' %}</span>: {{ o.block }}<br/>
+                                <span class="field-title">{% trans 'Row' %}</span>: {{ o.row }}
+
+                                </td>
+                            <td>
+                                {% if o.chlorophyl %}
+                                    <span class="field-title">{% trans 'Chlorophyl' %}</span>: {{ o.chlorophyl }}<br/>
+                                {% endif %}
+                                {% if o.fungal_disease %}
+                                    <span class="field-title">{% trans 'Fungal disease' %}</span>: {{ o.fungal_disease }}<br/>
+                                {% endif %}
+                                {% if o.eat_marks %}
+                                    <span class="field-title">{% trans 'Eat marks' %}</span>: {{ o.eat_marks }}<br/>
+                                {% endif %}
+                                {% if o.soil_moisture %}
+                                    <span class="field-title">{% trans 'Soil moisture' %}</span>: {{ o.soil_moisture }}<br/>
+                                {% endif %}
+                                {% if o.electric_conductivity %}
+                                    <span class="field-title">{% trans 'Electric conductivity' %}</span>: {{ o.electric_conductivity }}<br/>
+                                {% endif %}
+                                {% if o.temperature %}
+                                    <span class="field-title">{% trans 'Temperature' %}</span>: {{ o.temperature }}<br/>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <ul>
+                                {% for s in o.observationspecies.all %}
+                                  <li>{{ s.species.name }} - {{ s.coverage }}</li>
+                                {% endfor %}
+                              </ul>
+                            </td>
+
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">No data available</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% include 'includes/pagination.html' %}
+
+{% endblock %}
