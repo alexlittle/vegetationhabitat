@@ -21,8 +21,8 @@ urlpatterns = [
     path('plot-autocomplete/', views.PlotAutocompleteView.as_view(), name='plot_autocomplete'),
 
     path('profile/observations', views.UserObservationsView.as_view(), name='profile_observations'),
-    path('profile/observations/export', views.UserExportObservationsView.as_view(), name='profile_observations_export'),
-
+    path('profile/export/observations', views.UserExportObservationsView.as_view(), name='profile_observations_export'),
+    path('profile/export/images', views.UserExportImagesView.as_view(), name='profile_observations_export_images'),
 
 ]
 

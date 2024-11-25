@@ -1,7 +1,11 @@
 import csv
+import os
+import zipfile
 
+from io import BytesIO
 from datetime import datetime
 
+from django.conf import settings
 from django.views.generic import View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
@@ -27,6 +31,29 @@ class UserObservationsView(LoginRequiredMixin, ListView):
             .prefetch_related("plot__plotproperties_set", species_prefetch)
         )
 
+class UserExportImagesView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        user_dirname = "user_" + str(request.user.id)
+        user_directory = os.path.join(settings.MEDIA_ROOT, str(user_dirname))  # Directory where images are stored
+
+        if not os.path.exists(user_directory):
+            return HttpResponse("No images found for this user.", status=404)
+
+        # Create a zip file in memory
+        zip_buffer = BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+            for root, dirs, files in os.walk(user_directory):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, user_directory)  # Relative path inside the zip
+                    zip_file.write(file_path, arcname)
+
+        # Set the zip file's content for the response
+        zip_buffer.seek(0)  # Move to the beginning of the buffer
+        response = HttpResponse(zip_buffer, content_type="application/zip")
+        filename = f'{request.user.username}_images_{datetime.now().strftime("%Y%m%d_%H%M%S")}.zip'
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return response
 
 
 class UserExportObservationsView(LoginRequiredMixin, View):
