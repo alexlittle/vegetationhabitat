@@ -4,11 +4,10 @@ from django.forms import BaseFormSet
 from formtools.wizard.views import SessionWizardView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.base import ContentFile
+from django.core.exceptions import MultipleObjectsReturned
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import TemplateView
 
 from collector.models import Observation, Species, ObservationSpecies, Plot
@@ -136,11 +135,14 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
             coverage = form.cleaned_data.get('coverage')
 
             if u_species:
-                species, created = Species.objects.get_or_create(
-                    name=u_species,
-                    defaults={"user_generated": True,
-                              "name": u_species}
-                )
+                try:
+                    species, created = Species.objects.get_or_create(
+                        name=u_species,
+                        defaults={"user_generated": True,
+                                  "name": u_species}
+                    )
+                except MultipleObjectsReturned:
+                    species = Species.objects.filter(name=u_species).first()
 
                 observation_species = ObservationSpecies()
                 observation_species.observation = observation

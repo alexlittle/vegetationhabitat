@@ -22,7 +22,9 @@
 
 {% if user.is_authenticated %}
 <ul>
-<li><a href="{% url 'collector:observation_wizard' %}">{% trans 'Add an Observation' %}</a></li>
+    <li><a href="{% url 'collector:observation_wizard' %}">{% trans 'Add an Observation' %}</a></li>
+    <li><a href="{% url 'collector:profile_observations' %}">{% trans 'View your observations' %}</a></li>
+    <li><a href="{% url 'collector:profile_observations_export' %}">{% trans 'Export your observations to CSV' %}</a></li>
 </ul>
 {% endif %}
 {% endblock %}

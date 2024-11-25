@@ -24,19 +24,4 @@ class MapView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UserObservationsView(LoginRequiredMixin, ListView):
-    template_name = 'collector/user_observations.html'
-    paginate_by = 50
-    context_object_name = 'observations'
 
-    def get_queryset(self):
-        species_prefetch = Prefetch(
-            "observationspecies",  # The related_name in ObservationSpecies
-            queryset=ObservationSpecies.objects.all(),  # Optionally filter or annotate
-        )
-
-        return (
-            Observation.objects.filter(user=self.request.user)
-            .select_related("plot")  # Fetch the related Plot object in one query
-            .prefetch_related("plot__plotproperties_set", species_prefetch)  # Fetch the related PlotProperties for each Plot
-        )
