@@ -35,6 +35,7 @@ class Observation(models.Model):
     soil_moisture = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=None)
     electric_conductivity = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=None)
     temperature = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=None)
+    notes = models.TextField(blank=True, null=True, default=None)
 
     class Meta:
         verbose_name = _('Observation')

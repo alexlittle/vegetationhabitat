@@ -21,6 +21,7 @@
                         <th>Plot</th>
                         <th>Measurements</th>
                         <th>Species</th>
+                        <th>Notes</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -75,6 +76,11 @@
                                   <li>{{ s.species.name }} - {{ s.coverage }}</li>
                                 {% endfor %}
                               </ul>
+                            </td>
+                            <td>
+                                {% if o.notes %}
+                                    {{ o.notes }}
+                                {% endif %}
                             </td>
 
                         </tr>

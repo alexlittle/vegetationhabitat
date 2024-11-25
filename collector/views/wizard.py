@@ -11,7 +11,11 @@ from django.utils.timezone import now
 from django.views.generic import TemplateView
 
 from collector.models import Observation, Species, ObservationSpecies, Plot
-from collector.forms import ObservationLocationPhotoForm, ObservationPlotForm, ObservationMeasurementForm, ObservationSpeciesFormSet
+from collector.forms import (ObservationLocationPhotoForm,
+                             ObservationPlotForm,
+                             ObservationMeasurementForm,
+                             ObservationNotesForm,
+                             ObservationSpeciesFormSet)
 
 
 
@@ -22,13 +26,15 @@ class ObservationSuccessView(TemplateView):
 TEMPLATES = {"locphoto": 'collector/wizard/loc_photo.html',
              "plot": 'collector/wizard/plot.html',
              "measure": 'collector/wizard/measurements.html',
-             "species": 'collector/wizard/species.html'}
+             "species": 'collector/wizard/species.html',
+             "notes": 'collector/wizard/notes.html'}
 
 class ObservationWizard(LoginRequiredMixin, SessionWizardView):
     form_list = [("locphoto", ObservationLocationPhotoForm),
                  ("plot", ObservationPlotForm),
                  ("measure", ObservationMeasurementForm),
-                 ("species", ObservationSpeciesFormSet)]
+                 ("species", ObservationSpeciesFormSet),
+                 ("notes", ObservationNotesForm),]
 
     def get_form(self, step=None, data=None, files=None):
         """
@@ -98,6 +104,7 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         plot = form_dict['plot']
         measure = form_dict['measure']
         species = form_dict['species']
+        notes = form_dict['notes']
 
         # process image
         image = locphoto['observation_image'].value()
@@ -127,6 +134,7 @@ class ObservationWizard(LoginRequiredMixin, SessionWizardView):
         observation.soil_moisture = measure['soil_moisture'].value() if measure['soil_moisture'].value() != '' else None
         observation.electric_conductivity = measure['electric_conductivity'].value() if measure['electric_conductivity'].value()  != '' else None
         observation.temperature = measure['temperature'].value() if measure['temperature'].value() != '' else None
+        observation.notes = notes['notes'].value()
         observation.save()
 
 

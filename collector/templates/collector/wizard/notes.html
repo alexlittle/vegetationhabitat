@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+
+<h1>{% trans 'Record Observation' %}</h1>
+
+<h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }} - Additional Notes</h2>
+
+{% include 'includes/form_errors.html' %}
+
+<form id="ObservationForm" method="POST">
+    {% csrf_token %}
+    {{ wizard.management_form }}
+
+    {{ wizard.form.as_p }}
+
+    {% if wizard.steps.prev %}
+        <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">&lt;&lt; Back</button>
+    {% endif %}
+
+    <button type="submit" id="submit" class="wizard-nav-button">Submit Observation</button>
+
+</form>
+
+{% endblock %}

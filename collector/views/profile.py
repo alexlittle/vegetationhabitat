@@ -107,6 +107,7 @@ class UserExportObservationsView(LoginRequiredMixin, View):
             "electric_conductivity",
             "temperature",
             *species_list,
+            "notes",
         ]
 
         # Write CSV data
@@ -151,6 +152,7 @@ class UserExportObservationsView(LoginRequiredMixin, View):
                 for os in ObservationSpecies.objects.filter(observation=o)
             }
             row.extend(species_coverage.get(s.id, "") for s in species_list)
+            row.extend([ o.notes ])
 
             writer.writerow(row)
 
