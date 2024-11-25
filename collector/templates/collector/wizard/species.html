@@ -55,10 +55,10 @@
     {% endfor %}
 
      {% if wizard.steps.prev %}
-        <button type="submit" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
+        <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">&lt;&lt; Back</button>
     {% endif %}
 
-    <button type="submit" id="submit">Submit Observation</button>
+    <button type="submit" id="submit" class="wizard-nav-button">Submit Observation</button>
 </form>
 {{ form.media.js }}
 {% endblock %}

@@ -1,4 +1,7 @@
 import csv
+
+from datetime import datetime
+
 from django.views.generic import View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Prefetch
@@ -29,7 +32,8 @@ class UserObservationsView(LoginRequiredMixin, ListView):
 class UserExportObservationsView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="your_model_data.csv"'
+        filename = f'{request.user.username}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+        response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
         # Fetch observations for the user
         observations = (
