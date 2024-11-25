@@ -14,7 +14,7 @@ $(document).ready(function () {
             $suggestions.hide();
             return;
         }
-        if (query.length > 2) {
+        if (query.length >= 2) {
             $.ajax({
                 url: autoCompleteURL,
                 data: { q: query },
