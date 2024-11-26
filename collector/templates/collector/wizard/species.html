@@ -11,6 +11,8 @@
 <script defer src="{% static 'collector/species-autocomplete.js' %}"
     data-speciesacurl="{% url 'collector:species_autocomplete' %}">
 </script>
+<script defer src="{% static 'collector/add-species-observation.js' %}">
+</script>
 {% endblock extra_scripts %}
 
 
@@ -44,14 +46,20 @@
         </div>
     {% endif %}
 
+    <div id="formset-container">
     {% for form in wizard.form.forms %}
+        <div class="formset-form">
             {% for field in form %}
                 <div class="form-group">
                     {{ field.label_tag }}
                     {{ field }}
                 </div>
             {% endfor %}
+         </div>
     {% endfor %}
+    </div>
+
+    <button type="button" id="add-form">Add Another</button>
 
      {% if wizard.steps.prev %}
         <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">&lt;&lt; Back</button>

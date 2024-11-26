@@ -49,7 +49,7 @@ class BaseObservationSpeciesFormSet(BaseFormSet):
          if len(species_set) < 1:
              raise ValidationError("Please enter at least one species")
 
-ObservationSpeciesFormSet = formset_factory(ObservationSpeciesForm,  extra=3, min_num=2, formset=BaseObservationSpeciesFormSet)
+ObservationSpeciesFormSet = formset_factory(ObservationSpeciesForm,  extra=1, min_num=2, formset=BaseObservationSpeciesFormSet)
 
 
 
