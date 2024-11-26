@@ -168,10 +168,12 @@ LOGIN_REDIRECT_URL = '/'
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = "vh"
 
+PLANTNET_ENABLED = False
+PLANTNET_API_KEY = ""
+
 try:
     from config.local_settings import *
 except ImportError:
     import warnings
-    warnings.warn("Using default settings. Add `config.local_settings.py`"
-                  "for custom settings.")
+    warnings.warn("Using default settings. Add `config.local_settings.py` for custom settings.")
 
