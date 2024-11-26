@@ -1,5 +1,6 @@
 import csv
 import os
+
 import zipfile
 
 from io import BytesIO
@@ -116,9 +117,10 @@ class UserExportObservationsView(LoginRequiredMixin, View):
 
         for o in observations:
             # Base observation data
+            image_filename = os.path.basename(o.image.name) if o.image else ""
             row = [
                 o.create_date,
-                o.image.url if o.image else "",
+                image_filename,
                 o.geo_lat,
                 o.geo_lng,
                 o.plot,
