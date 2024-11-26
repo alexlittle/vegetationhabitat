@@ -28,14 +28,14 @@
     {{ wizard.form.observation_image }}
 
     <h3>Location</h3>
-    <label for="id_locphoto-geo_lat">Latitude:</label>
+    <label for="id_locphoto-geo_lat">{% trans 'Latitude:' %}</label>
         <input type="text" id="id_locphoto-geo_lat" name="locphoto-geo_lat" readonly>
     <br><br>
-    <label for="id_locphoto-geo_lng">Longitude:</label>
+    <label for="id_locphoto-geo_lng">{% trans 'Longitude:' %}</label>
     <input type="text" id="id_locphoto-geo_lng" name="locphoto-geo_lng" readonly>
     <br><br>
 
-    <button type="submit" id="submit" class="wizard-nav-button">Next &gt;&gt;</button>
+    <button type="submit" id="submit" class="wizard-nav-button">{% trans 'Next &gt;&gt;'%}</button>
 </form>
 
 {% endblock %}

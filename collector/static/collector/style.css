@@ -49,6 +49,11 @@ main {
     margin-right: 20px;
 }
 
+#add-form {
+    display: block;
+    margin: 20px 0 ;
+}
+
 /* Customise the navbar */
 
 .navbar-light {

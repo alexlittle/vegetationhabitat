@@ -17,10 +17,10 @@
     {{ wizard.form.as_p }}
 
     {% if wizard.steps.prev %}
-        <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">&lt;&lt; Back</button>
+        <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">{% trans '&lt;&lt; Back'%}</button>
     {% endif %}
 
-    <button type="submit" id="submit" class="wizard-nav-button">Submit Observation</button>
+    <button type="submit" id="submit" class="wizard-nav-button">{% trans 'Submit Observation'%}</button>
 
 </form>
 

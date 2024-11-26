@@ -61,11 +61,11 @@
 
     <button type="button" id="add-form">Add Another</button>
 
-     {% if wizard.steps.prev %}
-        <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">&lt;&lt; Back</button>
+    {% if wizard.steps.prev %}
+        <button type="submit" name="wizard_goto_step" class="wizard-nav-button" value="{{ wizard.steps.prev }}">{% trans '&lt;&lt; Back'%}</button>
     {% endif %}
 
-    <button type="submit" class="wizard-nav-button" id="submit">Next &gt;&gt;</button>
+    <button type="submit" id="submit" class="wizard-nav-button">{% trans 'Next &gt;&gt;'%}</button>
 </form>
 {{ form.media.js }}
 {% endblock %}
